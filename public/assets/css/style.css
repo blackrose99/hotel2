@@ -1,0 +1,33 @@
+/* /var/www/html/hotel/public/assets/css/style.css */
+body {
+    background-image: url('/hotel/public/assets/images/backgrounds/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+header, footer {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+}
+main {
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 5px;
+    margin: 20px auto;
+    max-width: 1200px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #f2f2f2;
+}
