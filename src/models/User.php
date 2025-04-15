@@ -1,15 +1,21 @@
 <?php
-// /var/www/html/hotel/src/models/User.php
+// /var/www/html/hotel2/src/models/User.php
 class User
 {
-    public $id;
-    public $username;
+    public $documentId;
+    public $firstName;
+    public $lastName;
+    public $gender;
     public $password;
+    public $role;
 
-    public function __construct($id = null, $username = null, $password = null)
+    public function __construct($documentId = null, $firstName = null, $lastName = null, $gender = null, $password = null, $role = 'user')
     {
-        $this->id = $id;
-        $this->username = $username;
+        $this->documentId = $documentId;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
+        $this->gender = $gender;
         $this->password = $password;
+        $this->role = $role;
     }
 }

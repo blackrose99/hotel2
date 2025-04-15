@@ -1,20 +1,20 @@
 <?php
-// /var/www/html/hotel/src/models/Booking.php
+// /var/www/html/hotel2/src/models/Booking.php
 class Booking
 {
     public $id;
-    public $roomId;
+    public $userDocumentId;
+    public $roomCode;
     public $rateId;
-    public $userId;
     public $startDate;
     public $endDate;
 
-    public function __construct($id = null, $roomId = null, $rateId = null, $userId = null, $startDate = null, $endDate = null)
+    public function __construct($id = null, $userDocumentId = null, $roomCode = null, $rateId = null, $startDate = null, $endDate = null)
     {
         $this->id = $id;
-        $this->roomId = $roomId;
+        $this->userDocumentId = $userDocumentId;
+        $this->roomCode = $roomCode;
         $this->rateId = $rateId;
-        $this->userId = $userId;
         $this->startDate = $startDate;
         $this->endDate = $endDate;
     }

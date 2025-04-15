@@ -1,7 +1,7 @@
 <?php
-// /var/www/html/hotel/src/controllers/RateController.php
+// /var/www/html/hotel2/src/controllers/RateController.php
 require_once __DIR__ . '/../config/Database.php';
-require_once __DIR__ . '/../patterns/factory/ModelFactory.php';
+require_once __DIR__ . '/../models/Rate.php';
 
 class RateController
 {
@@ -12,34 +12,60 @@ class RateController
         $this->db = Database::getInstance()->getConnection();
     }
 
-    public function create($roomId, $price)
+    private function roomExists($roomCode)
     {
-        $stmt = $this->db->prepare("INSERT INTO rates (room_id, price) VALUES (?, ?)");
-        $stmt->execute([$roomId, $price]);
-        return ModelFactory::create('rate', ['id' => $this->db->lastInsertId(), 'roomId' => $roomId, 'price' => $price]);
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM rooms WHERE code = ?");
+        $stmt->execute([$roomCode]);
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function create($roomCode, $price)
+    {
+        if (!$this->roomExists($roomCode)) {
+            throw new Exception("El código de habitación '$roomCode' no existe.");
+        }
+        $stmt = $this->db->prepare("INSERT INTO rates (room_code, price) VALUES (?, ?)");
+        $stmt->execute([$roomCode, $price]);
+        return $this->db->lastInsertId();
     }
 
     public function findAll()
     {
-        $stmt = $this->db->query("SELECT * FROM rates");
+        $stmt = $this->db->query("SELECT id, room_code, price FROM rates");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $rates = [];
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $rates[] = ModelFactory::create('rate', $row);
+        foreach ($rows as $row) {
+            $rate = new Rate();
+            $rate->id = $row['id'];
+            $rate->roomCode = $row['room_code']; // Mapeo manual
+            $rate->price = $row['price'];
+            $rates[] = $rate;
         }
         return $rates;
     }
 
     public function findById($id)
     {
-        $stmt = $this->db->prepare("SELECT * FROM rates WHERE id = ?");
+        $stmt = $this->db->prepare("SELECT id, room_code, price FROM rates WHERE id = ?");
         $stmt->execute([$id]);
-        return ModelFactory::create('rate', $stmt->fetch(PDO::FETCH_ASSOC));
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            $rate = new Rate();
+            $rate->id = $row['id'];
+            $rate->roomCode = $row['room_code']; // Mapeo manual
+            $rate->price = $row['price'];
+            return $rate;
+        }
+        return null;
     }
 
-    public function update($id, $roomId, $price)
+    public function update($id, $roomCode, $price)
     {
-        $stmt = $this->db->prepare("UPDATE rates SET room_id = ?, price = ? WHERE id = ?");
-        $stmt->execute([$roomId, $price, $id]);
+        if (!$this->roomExists($roomCode)) {
+            throw new Exception("El código de habitación '$roomCode' no existe.");
+        }
+        $stmt = $this->db->prepare("UPDATE rates SET room_code = ?, price = ? WHERE id = ?");
+        $stmt->execute([$roomCode, $price, $id]);
     }
 
     public function delete($id)

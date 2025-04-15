@@ -1,37 +1,31 @@
 <?php
-// /var/www/html/hotel/src/patterns/facade/HotelFacade.php
-require_once __DIR__ . '/../../controllers/AuthController.php';
+// /var/www/html/hotel2/src/patterns/facade/HotelFacade.php
 require_once __DIR__ . '/../../controllers/RoomController.php';
 require_once __DIR__ . '/../../controllers/RateController.php';
 require_once __DIR__ . '/../../controllers/BookingController.php';
 require_once __DIR__ . '/../../patterns/builder/BookingBuilder.php';
 require_once __DIR__ . '/../../patterns/abstract_factory/ThemeFactory.php';
+require_once __DIR__ . '/../../config/Database.php';
 
 class HotelFacade
 {
-    private $authController;
     private $roomController;
     private $rateController;
     private $bookingController;
+    private $db;
 
     public function __construct()
     {
-        $this->authController = new AuthController();
         $this->roomController = new RoomController();
         $this->rateController = new RateController();
         $this->bookingController = new BookingController();
-    }
-
-    // Auth
-    public function login($username, $password)
-    {
-        return $this->authController->login($username, $password);
+        $this->db = Database::getInstance()->getConnection();
     }
 
     // Room CRUD
-    public function createRoom($name, $description)
+    public function createRoom($code, $description)
     {
-        return $this->roomController->create($name, $description);
+        return $this->roomController->create($code, $description);
     }
 
     public function getRooms()
@@ -39,36 +33,35 @@ class HotelFacade
         return $this->roomController->findAll();
     }
 
-    public function getRoom($id)
+    public function getRoom($code)
     {
-        return $this->roomController->findById($id);
+        return $this->roomController->findById($code);
     }
 
-    public function updateRoom($id, $name, $description)
+    public function updateRoom($code, $description)
     {
-        $this->roomController->update($id, $name, $description);
+        $this->roomController->update($code, $description);
     }
 
-    private function hasBookingsForRoom($roomId)
+    private function hasBookingsForRoom($roomCode)
     {
-        $db = Database::getInstance()->getConnection();
-        $stmt = $db->prepare("SELECT COUNT(*) FROM bookings WHERE room_id = ?");
-        $stmt->execute([$roomId]);
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM bookings WHERE room_code = ?");
+        $stmt->execute([$roomCode]);
         return $stmt->fetchColumn() > 0;
     }
 
-    public function deleteRoom($id)
+    public function deleteRoom($code)
     {
-        if ($this->hasBookingsForRoom($id)) {
+        if ($this->hasBookingsForRoom($code)) {
             throw new Exception("No se puede eliminar la habitación porque tiene reservas asociadas.");
         }
-        $this->roomController->delete($id);
+        $this->roomController->delete($code);
     }
 
     // Rate CRUD
-    public function createRate($roomId, $price)
+    public function createRate($roomCode, $price)
     {
-        return $this->rateController->create($roomId, $price);
+        return $this->rateController->create($roomCode, $price);
     }
 
     public function getRates()
@@ -81,16 +74,14 @@ class HotelFacade
         return $this->rateController->findById($id);
     }
 
-    public function updateRate($id, $roomId, $price)
+    public function updateRate($id, $roomCode, $price)
     {
-        $this->rateController->update($id, $roomId, $price);
-        
+        $this->rateController->update($id, $roomCode, $price);
     }
 
     private function hasBookingsForRate($rateId)
     {
-        $db = Database::getInstance()->getConnection();
-        $stmt = $db->prepare("SELECT COUNT(*) FROM bookings WHERE rate_id = ?");
+        $stmt = $this->db->prepare("SELECT COUNT(*) FROM bookings WHERE rate_id = ?");
         $stmt->execute([$rateId]);
         return $stmt->fetchColumn() > 0;
     }
@@ -104,12 +95,12 @@ class HotelFacade
     }
 
     // Booking CRUD
-    public function createBooking($roomId, $rateId, $userId, $startDate, $endDate)
+    public function createBooking($userDocumentId, $roomCode, $rateId, $startDate, $endDate)
     {
         $booking = (new BookingBuilder())
-            ->setRoomId($roomId)
+            ->setUserDocumentId($userDocumentId)
+            ->setRoomCode($roomCode)
             ->setRateId($rateId)
-            ->setUserId($userId)
             ->setDates($startDate, $endDate)
             ->build();
         return $this->bookingController->create($booking);
@@ -125,12 +116,12 @@ class HotelFacade
         return $this->bookingController->findById($id);
     }
 
-    public function updateBooking($id, $roomId, $rateId, $userId, $startDate, $endDate)
+    public function updateBooking($id, $userDocumentId, $roomCode, $rateId, $startDate, $endDate)
     {
         $booking = (new BookingBuilder())
-            ->setRoomId($roomId)
+            ->setUserDocumentId($userDocumentId)
+            ->setRoomCode($roomCode)
             ->setRateId($rateId)
-            ->setUserId($userId)
             ->setDates($startDate, $endDate)
             ->build();
         $booking->id = $id;

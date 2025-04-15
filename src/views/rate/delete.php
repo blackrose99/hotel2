@@ -1,10 +1,14 @@
 <?php
-// /var/www/html/hotel/src/views/rate/delete.php
+// /var/www/html/hotel2/src/views/rate/delete.php
 $id = $_GET['id'] ?? null;
 if (!$id) {
     throw new Exception("ID de tarifa requerido para eliminar");
 }
 
-$facade->deleteRate($id);
-header("Location: ?entity=rate&action=list");
-exit;
+try {
+    $facade->deleteRate($id);
+    header("Location: ?entity=rate&action=list");
+    exit;
+} catch (Exception $e) {
+    echo "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
+}

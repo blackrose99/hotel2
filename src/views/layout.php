@@ -1,14 +1,16 @@
 <?php
-// /var/www/html/hotel/src/views/layout.php
+// /var/www/html/hotel2/src/views/layout.php
 require_once __DIR__ . '/../patterns/facade/HotelFacade.php';
+require_once __DIR__ . '/../patterns/facade/UserFacade.php';
 
-// Inicializamos el facade
+// Inicializamos los facades
 $facade = new HotelFacade();
+$userFacade = new UserFacade();
 
 // Variables para controlar la vista
-$entity = $_GET['entity'] ?? 'room'; // Entidad por defecto: room
-$action = $_GET['action'] ?? 'list'; // Acción por defecto: list
-$error = null; // Para almacenar errores
+$entity = $_GET['entity'] ?? 'room';
+$action = $_GET['action'] ?? 'list';
+$error = null;
 
 // Tema dinámico desde Abstract Factory
 $theme = $facade->getTheme('base');
@@ -22,6 +24,7 @@ try {
 } catch (Exception $e) {
     $error = "Error: " . $e->getMessage();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -37,26 +40,25 @@ try {
     <link rel="stylesheet" href="<?php echo $theme['css']; ?>">
     <style>
         body {
-            background-image: url('/hotel/public/assets/images/backgrounds/background.jpg');
+            background-image: url('/hotel2/public/assets/images/background.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             min-height: 100vh;
             margin: 0;
             padding: 0;
+            padding-bottom: 60px;
         }
 
         header,
-        footer {
+        .footer {
             background-color: rgba(255, 255, 255, 0.8);
-            /* Fondo blanco semitransparente */
             padding: 10px;
         }
 
         main {
             padding: 20px;
             background-color: rgba(255, 255, 255, 0.9);
-            /* Fondo claro para el contenido */
             border-radius: 5px;
             margin: 20px auto;
             max-width: 1200px;
@@ -72,6 +74,7 @@ try {
             <a class="nav-link" href="?entity=room&action=list"><i class="material-icons">hotel</i> Rooms</a>
             <a class="nav-link" href="?entity=rate&action=list"><i class="material-icons">attach_money</i> Rates</a>
             <a class="nav-link" href="?entity=booking&action=list"><i class="material-icons">book</i> Bookings</a>
+            <a class="nav-link" href="?entity=user&action=list"><i class="material-icons">person</i> Users</a>
         </nav>
     </header>
 

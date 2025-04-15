@@ -1,10 +1,14 @@
 <?php
-// /var/www/html/hotel/src/views/room/delete.php
-$id = $_GET['id'] ?? null;
-if (!$id) {
-    throw new Exception("ID de habitación requerido para eliminar");
+// /var/www/html/hotel2/src/views/room/delete.php
+$code = $_GET['code'] ?? null;
+if (!$code) {
+    throw new Exception("Código de habitación requerido para eliminar");
 }
 
-$facade->deleteRoom($id);
-header("Location: ?entity=room&action=list");
-exit;
+try {
+    $facade->deleteRoom($code);
+    header("Location: ?entity=room&action=list");
+    exit;
+} catch (Exception $e) {
+    echo "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
+}

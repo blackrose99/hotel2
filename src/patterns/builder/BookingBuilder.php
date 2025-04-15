@@ -1,43 +1,41 @@
 <?php
-// /var/www/html/hotel/src/patterns/builder/BookingBuilder.php
-require_once __DIR__ . '/../../models/Booking.php';
-
+// /var/www/html/hotel2/src/patterns/builder/BookingBuilder.php
 class BookingBuilder
 {
-    private $booking;
+    public $id;
+    public $userDocumentId;
+    public $roomCode;
+    public $rateId;
+    public $startDate;
+    public $endDate;
 
-    public function __construct()
+    public function setUserDocumentId($userDocumentId)
     {
-        $this->booking = new Booking();
+        $this->userDocumentId = $userDocumentId;
+        return $this;
     }
 
-    public function setRoomId($roomId)
+    public function setRoomCode($roomCode)
     {
-        $this->booking->roomId = $roomId;
+        $this->roomCode = $roomCode;
         return $this;
     }
 
     public function setRateId($rateId)
     {
-        $this->booking->rateId = $rateId;
-        return $this;
-    }
-
-    public function setUserId($userId)
-    {
-        $this->booking->userId = $userId;
+        $this->rateId = $rateId;
         return $this;
     }
 
     public function setDates($startDate, $endDate)
     {
-        $this->booking->startDate = $startDate;
-        $this->booking->endDate = $endDate;
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
         return $this;
     }
 
     public function build()
     {
-        return $this->booking;
+        return $this;
     }
 }

@@ -1,15 +1,15 @@
 <?php
-// /var/www/html/hotel/src/models/Rate.php
+// /var/www/html/hotel2/src/models/Rate.php
 class Rate
 {
     public $id;
-    public $roomId;
+    public $roomCode;
     public $price;
 
-    public function __construct($id = null, $roomId = null, $price = null)
+    public function __construct($id = null, $roomCode = null, $price = null)
     {
         $this->id = $id;
-        $this->roomId = $roomId;
+        $this->roomCode = $roomCode;
         $this->price = $price;
     }
 }

@@ -1,15 +1,13 @@
 <?php
-// /var/www/html/hotel/src/models/Room.php
+// /var/www/html/hotel2/src/models/Room.php
 class Room
 {
-    public $id;
-    public $name;
+    public $code;
     public $description;
 
-    public function __construct($id = null, $name = null, $description = null)
+    public function __construct($code = null, $description = null)
     {
-        $this->id = $id;
-        $this->name = $name;
+        $this->code = $code;
         $this->description = $description;
     }
 }

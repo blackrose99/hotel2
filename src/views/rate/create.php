@@ -1,18 +1,29 @@
 <?php
-// /var/www/html/hotel/src/views/rate/create.php
+// /var/www/html/hotel2/src/views/rate/create.php
+$rooms = $facade->getRooms();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $facade->createRate($_POST['roomId'], $_POST['price']);
-    header("Location: ?entity=rate&action=list");
-    exit;
+    try {
+        $facade->createRate($_POST['roomCode'], $_POST['price']);
+        header("Location: ?entity=rate&action=list");
+        exit;
+    } catch (Exception $e) {
+        echo "<div class='alert alert-danger'>Error: " . $e->getMessage() . "</div>";
+    }
 }
 ?>
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-primary">Create Rate</h2>
+    <h2 class="mb-4 text-primary"><i class="material-icons align-middle">attach_money</i> Create Rate</h2>
     <form method="POST">
         <div class="mb-3">
-            <label for="roomId" class="form-label"><i class="material-icons align-middle">hotel</i> Room ID</label>
-            <input type="number" class="form-control" id="roomId" name="roomId" required>
+            <label for="roomCode" class="form-label"><i class="material-icons align-middle">hotel</i> Room</label>
+            <select class="form-control" id="roomCode" name="roomCode" required>
+                <option value="">Select a room</option>
+                <?php foreach ($rooms as $room): ?>
+                    <option value="<?php echo htmlspecialchars($room->code); ?>"><?php echo htmlspecialchars($room->code); ?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <div class="mb-3">
             <label for="price" class="form-label"><i class="material-icons align-middle">attach_money</i> Price</label>
